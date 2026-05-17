@@ -19,6 +19,7 @@ public class AcidRain extends QWidget {
     private final int SCREEN_HEIGHT = 400;
     
     private String[] englishWordList = {"hello", "java", "bruh", "linux", "build", "clang", "maven", "what"};
+    private String[] koreanWordList = {"안녕", "자바", "오잉", "리눅스", "빌드", "한글", "점심", "침대"};
     private Random random = new Random();
 
     public AcidRain() {
@@ -110,7 +111,7 @@ public class AcidRain extends QWidget {
         }
     }
     
-    @Override
+    //@Override
     protected void closeEvent(QCloseEvent event) {
         saveHighScore(score);
         super.closeEvent(event);
