@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>io.github.stup1db4nana.acidrain-qt</groupId>
+    <artifactId>acidrain-qt</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  
+    <properties>
+  		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>21</maven.compiler.release>
+        <qtjambi.version>6.11.1</qtjambi.version> 
+    </properties>
+  
+  	<build>
+        <plugins>
+            <plugin>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.7.1</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>detect</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+    			<groupId>org.codehaus.mojo</groupId>
+    			<artifactId>exec-maven-plugin</artifactId>
+    			<version>3.1.0</version>
+    			<configuration>
+                    <executable>java</executable>
+        			
+                    <arguments>
+                    	<argument>--enable-native-access=ALL-UNNAMED</argument>
+                     
+                        <argument>--class-path</argument>
+                        <classpath/>
+                        
+                        <argument>AcidRain</argument>
+                    </arguments>
+                    
+        			<environmentVariables>
+            			<LANG>en_US.UTF-8</LANG>
+            			<QT_QPA_PLATFORMTHEME>breeze</QT_QPA_PLATFORMTHEME>
+        			</environmentVariables>
+    			</configuration>
+			</plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.qtjambi</groupId>
+            <artifactId>qtjambi</artifactId>
+            <version>${qtjambi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.qtjambi</groupId>
+            <artifactId>qtjambi-native-linux-x64</artifactId>
+            <version>${qtjambi.version}</version>
+        </dependency>
+    </dependencies>
+</project>
