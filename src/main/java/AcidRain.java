@@ -117,7 +117,7 @@ public class AcidRain extends QWidget {
     }
     
     private void saveHighScore(int finalScore) {
-        File file = new File("highscores.txt");
+        File file = new File("acidrain-qt.save");
         int currentHighScore = 0;
 
         if (file.exists()) {
