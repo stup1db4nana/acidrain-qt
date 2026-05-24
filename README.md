@@ -1,2 +1,2 @@
 # acidrain-qt
- A KGU school project for java
+An acid rain typing game build in java and qt through QtJambi
