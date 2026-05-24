@@ -23,8 +23,8 @@ public class AcidRain extends QWidget {
 	private final int SCREEN_HEIGHT = 400;
 
 	private String[] englishWordList = { "hello", "java", "bruh", "linux", "build", "clang", "maven", "what" };
-	// private String[] koreanWordList = {"안녕", "자바", "오잉", "리눅스", "빌드", "한글", "점심",
-	// "침대"};
+	private String[] koreanWordList = {"안녕", "자바", "오잉", "리눅스", "빌드", "한글", "점심", "침대"};
+	private int languageSet = 0;
 	private Random random = new Random();
 
 	public AcidRain() {
@@ -71,12 +71,21 @@ public class AcidRain extends QWidget {
 		recordsButton.setFixedSize(200, 45);
 		// recordsButton.setStyleSheet("font-size: 14px;");
 		recordsButton.clicked.connect(this, "displayHighScoreRecords()");
+		
+		QComboBox languageSelection = new QComboBox(menuWidget);
+		languageSelection.addItem("한국어");
+		languageSelection.addItem("English");
+		languageSelection.addItem("혼합");
+		languageSelection.currentIndexChanged.connect((index) -> {this.languageSet = index;});
+		
+		
 
 		menuLayout.addWidget(titleLabel);
 		menuLayout.addWidget(subtitleLabel);
 		menuLayout.addWidget(userSetupButton);
 		menuLayout.addWidget(startButton);
 		menuLayout.addWidget(recordsButton);
+		menuLayout.addWidget(languageSelection);
 	}
 
 	private void initGame() {
@@ -95,7 +104,7 @@ public class AcidRain extends QWidget {
 
 		inputField = new QLineEdit(gameWidget);
 		inputField.setPlaceholderText("여기에 입력하십시오.");
-		inputField.returnPressed.connect(this, "checkTypedWord()");
+		inputField.returnPressed.connect(this, "checkWord()");
 
 		QVBoxLayout gameLayout = new QVBoxLayout(gameWidget);
 		gameLayout.addWidget(view);
@@ -120,7 +129,7 @@ public class AcidRain extends QWidget {
 		inputField.setFocus();
 
 		gameTimer = new QTimer(this);
-		gameTimer.timeout.connect(this, "updateGameLoop()");
+		gameTimer.timeout.connect(this, "moveWord()");
 		gameTimer.start(30);
 
 		spawnTimer = new QTimer(this);
@@ -130,7 +139,21 @@ public class AcidRain extends QWidget {
 
 	@SuppressWarnings("unused")
 	private void spawnWord() {
-		String randomWord = englishWordList[random.nextInt(englishWordList.length)];
+		
+		String randomWord = null;
+		
+		switch (languageSet) {
+		case 0:
+			randomWord = koreanWordList[random.nextInt(englishWordList.length)];
+			break;
+		case 1:
+			randomWord = englishWordList[random.nextInt(englishWordList.length)];
+			break;		
+		} /*
+		if (languageSet == 0) {
+			randomWord = englishWordList[random.nextInt(englishWordList.length)];
+		} */
+		//String randomWord = englishWordList[random.nextInt(englishWordList.length)];
 		QGraphicsTextItem textItem = scene.addText(randomWord);
 
 		int xPos = random.nextInt(SCREEN_WIDTH - 200) + 100;
@@ -139,7 +162,7 @@ public class AcidRain extends QWidget {
 	}
 
 	@SuppressWarnings("unused")
-	private void updateGameLoop() {
+	private void moveWord() {
 		List<QGraphicsTextItem> toRemove = new ArrayList<>();
 
 		for (QGraphicsTextItem word : fallingWords) {
@@ -147,7 +170,10 @@ public class AcidRain extends QWidget {
 
 			if (word.y() >= scene.height()) {
 				toRemove.add(word);
-				score = Math.max(0, score - 1);
+				//score = Math.max(0, score - 1);
+				QMessageBox.information(this, "게임 종료 ", "사망하였습니다.");
+				stackedWidget.setCurrentIndex(0);
+				break;
 			}
 		}
 
@@ -161,7 +187,7 @@ public class AcidRain extends QWidget {
 	}
 
 	@SuppressWarnings("unused")
-	private void checkTypedWord() {
+	private void checkWord() {
 		String typedText = inputField.text().trim();
 		inputField.clear();
 
