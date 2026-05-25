@@ -141,7 +141,7 @@ public class AcidRain extends QWidget {
 		String userInput = this.userInputField.text().trim();
 
 		this.userName = userInput;
-		QMessageBox.information(this, "사용자 이름", "사용자 이름: " + this.userName);
+		QMessageBox.information(this, "도전자 이름", "새로운 사용자 이름은 " + this.userName + "입니다.");
 	}
 
 	private void initGame() {
@@ -232,7 +232,7 @@ public class AcidRain extends QWidget {
 			if (word.y() >= scene.height()) {
 				gameTimer.stop();
 				spawnTimer.stop();
-				QMessageBox.information(this, "게임 종료 ", "최종 점수: " + score);
+				QMessageBox.information(this, "게임 종료 ", "최종 점수는 " + score + "점입니다.");
 				saveScore(score);
 				returnToMenu();
 				break;
