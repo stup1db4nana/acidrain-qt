@@ -67,24 +67,23 @@ public class AcidRain extends QWidget {
 
 		QLabel subtitleLabel = new QLabel("타자 프로그램에 오신 것을 환영합니다.");
 		subtitleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
-		// subtitleLabel.setStyleSheet("margin-bottom: 100px;");
 
 		QPushButton userSetupButton = new QPushButton("도전자 정보 입력하기", menuWidget);
-		userSetupButton.setFixedSize(200, 45);
+		userSetupButton.setFixedSize(200, 40);
 		userSetupButton.clicked.connect(this, "userLogic()");
 
 		QPushButton startButton = new QPushButton("게임하기", menuWidget);
-		startButton.setFixedSize(200, 45);
-		// startButton.setStyleSheet("font-size: 16px; font-weight: bold;");
+		startButton.setFixedSize(200, 40);
 
 		startButton.clicked.connect(this, "gameLogic()");
 
 		QPushButton recordsButton = new QPushButton("전체 랭킹 확인하기", menuWidget);
-		recordsButton.setFixedSize(200, 45);
-		// recordsButton.setStyleSheet("font-size: 14px;");
+		recordsButton.setFixedSize(200, 40);
 		recordsButton.clicked.connect(this, "displayHighScoreRecords()");
 
 		QComboBox languageSelection = new QComboBox(menuWidget);
+		languageSelection.setFixedSize(200, 30);
+
 		languageSelection.addItem("한글 도전");
 		languageSelection.addItem("영문 도전");
 		languageSelection.addItem("기호 도전");
@@ -147,7 +146,6 @@ public class AcidRain extends QWidget {
 		scene.setSceneRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 100);
 
 		view = new QGraphicsView(scene);
-		// view.setFixedSize(SCREEN_WIDTH, SCREEN_HEIGHT - 80);
 		view.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff);
 		view.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff);
 
@@ -210,11 +208,8 @@ public class AcidRain extends QWidget {
 			else
 				randomWord = englishWordList[random.nextInt(englishWordList.length)];
 			break;
-		} /*
-			 * if (languageSet == 0) { randomWord =
-			 * englishWordList[random.nextInt(englishWordList.length)]; }
-			 */
-		// String randomWord = englishWordList[random.nextInt(englishWordList.length)];
+		}
+		
 		QGraphicsTextItem textItem = scene.addText(randomWord);
 
 		int xPos = random.nextInt(SCREEN_WIDTH - 200) + 100;
@@ -271,11 +266,6 @@ public class AcidRain extends QWidget {
 		int currentHighScore = readFromFile();
 		QMessageBox.information(this, "최고점수", "현재 최고점수는: " + currentHighScore);
 	}
-	/*
-	 * @Override protected void closeEvent(QCloseEvent event) { if (gameTimer !=
-	 * null && gameTimer.isActive()) { saveScore(score); } super.closeEvent(event);
-	 * }
-	 */
 
 	private int readFromFile() {
 		File file = new File("acidrain-qt.save");
@@ -292,14 +282,6 @@ public class AcidRain extends QWidget {
 	}
 
 	private void saveScore(int finalScore) {
-		// int currentHighScore = readFromFile();
-		/*
-		 * if (finalScore > currentHighScore) { QMessageBox.information(this, "신기록",
-		 * "신기록을 달성하였습니다.: " + finalScore); try (BufferedWriter writer = new
-		 * BufferedWriter(new FileWriter("acidrain-qt.save"))) {
-		 * writer.write(String.valueOf(finalScore)); } catch (IOException e) {
-		 * e.printStackTrace(); } }
-		 */
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("acidrain-qt.save", true))) {
 
 			writer.write(userName + "; " + languageSet + "; " + String.valueOf(finalScore) + ";");
