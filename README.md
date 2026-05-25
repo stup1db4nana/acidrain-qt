@@ -5,4 +5,4 @@ This is for a school project and is a gigantic piece of shite that barely works.
 
 ## build instructions
 
-Uhh.. qt6-base is probably needed. Maybe.
+Keep throwing shit at it until it sticks. You'll need qt6-base.
