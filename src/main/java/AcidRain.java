@@ -26,7 +26,13 @@ public class AcidRain extends QWidget {
 	private final int SCREEN_WIDTH = 500;
 	private final int SCREEN_HEIGHT = 400;
 
-	private String userName = "test";
+	private String userName;
+	
+	private void ScoreData(String name, int type, int score) {
+		this.userName = name;
+		this.languageSet = type;
+		this.score = score;
+	}
 
 	private int languageSet = 0;
 	private String[] koreanWordList = { "안녕", "자바", "오잉", "리눅스", "빌드", "한글", "점심", "침대", "간식", "과제", "배개", "짜장면" };
@@ -79,7 +85,7 @@ public class AcidRain extends QWidget {
 
 		QPushButton recordsButton = new QPushButton("전체 랭킹 확인하기", menuWidget);
 		recordsButton.setFixedSize(200, 40);
-		recordsButton.clicked.connect(this, "displayHighScoreRecords()");
+		//recordsButton.clicked.connect(this, "displayHighScoreRecords()");
 
 		QComboBox languageSelection = new QComboBox(menuWidget);
 		languageSelection.setFixedSize(200, 30);
@@ -259,12 +265,6 @@ public class AcidRain extends QWidget {
 			score += 1;
 			scoreLabel.setText("점수: " + score);
 		}
-	}
-
-	@SuppressWarnings("unused")
-	private void displayHighScoreRecords() {
-		int currentHighScore = readFromFile();
-		QMessageBox.information(this, "최고점수", "현재 최고점수는: " + currentHighScore);
 	}
 
 	private int readFromFile() {
