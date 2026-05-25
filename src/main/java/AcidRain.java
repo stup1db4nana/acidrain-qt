@@ -195,10 +195,10 @@ public class AcidRain extends QWidget {
 
 		switch (languageSet) {
 		case 0:
-			randomWord = koreanWordList[random.nextInt(englishWordList.length)];
+			randomWord = koreanWordList[random.nextInt(koreanWordList.length)];
 			break;
 		case 1:
-			randomWord = englishWordList[random.nextInt(koreanWordList.length)];
+			randomWord = englishWordList[random.nextInt(englishWordList.length)];
 			break;
 		case 2:
 			randomWord = symbolWordList[random.nextInt(symbolWordList.length)];
