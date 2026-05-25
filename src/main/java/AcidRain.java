@@ -3,6 +3,7 @@ import io.qt.widgets.*;
 //import io.qt.gui.*;
 import java.io.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class AcidRain extends QWidget {
 
@@ -27,12 +28,7 @@ public class AcidRain extends QWidget {
 	private final int SCREEN_HEIGHT = 400;
 
 	private String userName;
-	
-	private void ScoreData(String name, int type, int score) {
-		this.userName = name;
-		this.languageSet = type;
-		this.score = score;
-	}
+	private String fileData;
 
 	private int languageSet = 0;
 	private String[] koreanWordList = { "안녕", "자바", "오잉", "리눅스", "빌드", "한글", "점심", "침대", "간식", "과제", "배개", "짜장면" };
@@ -86,6 +82,7 @@ public class AcidRain extends QWidget {
 		QPushButton recordsButton = new QPushButton("전체 랭킹 확인하기", menuWidget);
 		recordsButton.setFixedSize(200, 40);
 		//recordsButton.clicked.connect(this, "displayHighScoreRecords()");
+		recordsButton.clicked.connect(this, "readFromFile()");
 
 		QComboBox languageSelection = new QComboBox(menuWidget);
 		languageSelection.setFixedSize(200, 30);
@@ -267,8 +264,10 @@ public class AcidRain extends QWidget {
 		}
 	}
 
-	private int readFromFile() {
-		File file = new File("acidrain-qt.save");
+	@SuppressWarnings("unused")
+	private String readFromFile() {
+		//File file = new File("acidrain-qt.save");
+		/* 
 		if (file.exists()) {
 			try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 				String line = reader.readLine();
@@ -277,8 +276,22 @@ public class AcidRain extends QWidget {
 			} catch (IOException | NumberFormatException e) {
 				e.printStackTrace();
 			}
+		} */
+		
+		try {
+			Scanner fileScan = new Scanner(new File("acidrain-qt.save"));
+			
+			fileScan.useDelimiter(Pattern.compile(";"));
+			while(fileScan.hasNext()) {
+				fileData = fileScan.next();
+			}
+			fileScan.close();
+			return fileData;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return 0;
+		return null;
 	}
 
 	private void saveScore(int finalScore) {
