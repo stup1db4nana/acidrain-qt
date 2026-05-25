@@ -8,10 +8,11 @@ import java.util.regex.Pattern;
 public class AcidRain extends QWidget {
 
 	private QStackedWidget stackedWidget;
+	private QTableWidget rankTable;
 	private QWidget menuWidget;
 	private QWidget userWidget;
 	private QWidget gameWidget;
-	// private QWidget scoreWidget;
+	private QWidget scoreWidget;
 
 	private QGraphicsScene scene;
 	private QGraphicsView view;
@@ -24,17 +25,17 @@ public class AcidRain extends QWidget {
 
 	private List<QGraphicsTextItem> fallingWords = new ArrayList<>();
 	private int score = 0;
+	private int languageSet = 0;
+	
 	private final int SCREEN_WIDTH = 500;
 	private final int SCREEN_HEIGHT = 400;
-
-	private String userName;
-	private String fileData;
-
-	private int languageSet = 0;
+	
 	private String[] koreanWordList = { "안녕", "자바", "오잉", "리눅스", "빌드", "한글", "점심", "침대", "간식", "과제", "배개", "짜장면" };
 	private String[] englishWordList = { "hello", "java", "bruh", "linux", "build", "clang", "maven", "what",
 			"fedora" };
 	private String[] symbolWordList = { "!", "@", "#", "$", "%", "^", "&", "*", "(", ")" };
+	private String userName;
+	private String fileData;
 
 	private Random random = new Random();
 
@@ -43,10 +44,11 @@ public class AcidRain extends QWidget {
 		initMenu();
 		initUser();
 		initGame();
+		initScore();
 		stackedWidget.addWidget(menuWidget);
 		stackedWidget.addWidget(userWidget);
 		stackedWidget.addWidget(gameWidget);
-		// stackedWidget.addWidget(scoreWidget);
+		stackedWidget.addWidget(scoreWidget);
 
 		QVBoxLayout mainLayout = new QVBoxLayout(this);
 		mainLayout.addWidget(stackedWidget);
@@ -82,7 +84,7 @@ public class AcidRain extends QWidget {
 		QPushButton recordsButton = new QPushButton("전체 랭킹 확인하기", menuWidget);
 		recordsButton.setFixedSize(200, 40);
 		//recordsButton.clicked.connect(this, "displayHighScoreRecords()");
-		recordsButton.clicked.connect(this, "readFromFile()");
+		recordsButton.clicked.connect(this, "scoreLogic()");
 
 		QComboBox languageSelection = new QComboBox(menuWidget);
 		languageSelection.setFixedSize(200, 30);
@@ -151,6 +153,7 @@ public class AcidRain extends QWidget {
 		view = new QGraphicsView(scene);
 		view.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff);
 		view.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff);
+		view.setFocusPolicy(Qt.FocusPolicy.NoFocus);
 
 		scoreLabel = new QLabel("점수: 0", gameWidget);
 
@@ -164,6 +167,7 @@ public class AcidRain extends QWidget {
 		gameLayout.addWidget(gameInputField);
 
 	}
+
 
 	@SuppressWarnings("unused")
 	private void gameLogic() {
@@ -264,20 +268,34 @@ public class AcidRain extends QWidget {
 		}
 	}
 
+	private void initScore() {
+		scoreWidget = new QWidget(this);
+		
+
+		QPushButton returnToMenu = new QPushButton("메뉴로 돌아가기", scoreWidget);
+		returnToMenu.clicked.connect(this,  "returnToMenu()");
+		returnToMenu.setFixedSize(100, 30);
+		
+		rankTable = new QTableWidget();
+		rankTable.setColumnCount(3);
+		rankTable.setHorizontalHeaderLabels(Arrays.asList("이름", "언어", "점수"));
+		rankTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch);
+		rankTable.setFocusPolicy(Qt.FocusPolicy.NoFocus);
+		
+		QVBoxLayout scoreLayout = new QVBoxLayout(scoreWidget);
+		scoreLayout.setAlignment(Qt.AlignmentFlag.AlignLeft);
+		scoreLayout.addWidget(returnToMenu);
+		scoreLayout.addWidget(rankTable);
+	}
+	
+	@SuppressWarnings("unused")
+	private void scoreLogic() {
+		stackedWidget.setCurrentIndex(3);
+	}
+	
 	@SuppressWarnings("unused")
 	private String readFromFile() {
-		//File file = new File("acidrain-qt.save");
-		/* 
-		if (file.exists()) {
-			try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-				String line = reader.readLine();
-				if (line != null)
-					return Integer.parseInt(line.trim());
-			} catch (IOException | NumberFormatException e) {
-				e.printStackTrace();
-			}
-		} */
-		
+
 		try {
 			Scanner fileScan = new Scanner(new File("acidrain-qt.save"));
 			
