@@ -39,6 +39,7 @@ buildNumber.properties
 # Eclipse m2e generated files
 # Eclipse Core
 .project
+.settings
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 target/classes/META-INF/maven/io.github.stup1db4nana.acidrain-qt/acidrain-qt/pom.properties
