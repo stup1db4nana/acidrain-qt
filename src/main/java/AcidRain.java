@@ -3,12 +3,12 @@ import io.qt.widgets.*;
 //import io.qt.gui.*;
 import java.io.*;
 import java.util.*;
-import java.util.regex.Pattern;
+//import java.util.regex.Pattern;
 
 public class AcidRain extends QWidget {
 
 	private QStackedWidget stackedWidget;
-	private QTableWidget rankTable;
+	private QTableWidget rankTableWidget;
 	private QWidget menuWidget;
 	private QWidget userWidget;
 	private QWidget gameWidget;
@@ -16,20 +16,20 @@ public class AcidRain extends QWidget {
 
 	private QGraphicsScene scene;
 	private QGraphicsView view;
-	private QLineEdit gameInputField;
-	private QLineEdit userInputField;
+	private QLineEdit gameInputLineEdit;
+	private QLineEdit nameLineEdit;
 
 	private QLabel scoreLabel;
-	private QTimer gameTimer;
+	private QTimer frameTimer;
 	private QTimer spawnTimer;
 
 	private List<QGraphicsTextItem> fallingWords = new ArrayList<>();
 	private int score = 0;
 	private int languageSet = 0;
-	
+
 	private final int SCREEN_WIDTH = 500;
 	private final int SCREEN_HEIGHT = 400;
-	
+
 	private String[] koreanWordList = { "안녕", "자바", "오잉", "리눅스", "빌드", "한글", "점심", "침대", "간식", "과제", "배개", "짜장면" };
 	private String[] englishWordList = { "hello", "java", "bruh", "linux", "build", "clang", "maven", "what",
 			"fedora" };
@@ -41,6 +41,7 @@ public class AcidRain extends QWidget {
 
 	public AcidRain() {
 		stackedWidget = new QStackedWidget(this);
+
 		initMenu();
 		initUser();
 		initGame();
@@ -72,37 +73,36 @@ public class AcidRain extends QWidget {
 		QLabel subtitleLabel = new QLabel("타자 프로그램에 오신 것을 환영합니다.");
 		subtitleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
 
-		QPushButton userSetupButton = new QPushButton("도전자 정보 입력하기", menuWidget);
-		userSetupButton.setFixedSize(200, 40);
-		userSetupButton.clicked.connect(this, "userLogic()");
+		QPushButton userSetupPushButton = new QPushButton("도전자 정보 입력하기", menuWidget);
+		userSetupPushButton.setFixedSize(200, 40);
+		userSetupPushButton.clicked.connect(this, "userLogic()");
 
-		QPushButton startButton = new QPushButton("게임하기", menuWidget);
-		startButton.setFixedSize(200, 40);
+		QPushButton startGamePushButton = new QPushButton("게임하기", menuWidget);
+		startGamePushButton.setFixedSize(200, 40);
 
-		startButton.clicked.connect(this, "gameLogic()");
+		startGamePushButton.clicked.connect(this, "gameLogic()");
 
-		QPushButton recordsButton = new QPushButton("전체 랭킹 확인하기", menuWidget);
-		recordsButton.setFixedSize(200, 40);
-		//recordsButton.clicked.connect(this, "displayHighScoreRecords()");
-		recordsButton.clicked.connect(this, "scoreLogic()");
+		QPushButton rankDisplayPushButton = new QPushButton("전체 랭킹 확인하기", menuWidget);
+		rankDisplayPushButton.setFixedSize(200, 40);
+		rankDisplayPushButton.clicked.connect(this, "scoreLogic()");
 
-		QComboBox languageSelection = new QComboBox(menuWidget);
-		languageSelection.setFixedSize(200, 30);
+		QComboBox setLanguageComboBox = new QComboBox(menuWidget);
+		setLanguageComboBox.setFixedSize(200, 30);
 
-		languageSelection.addItem("한글 도전");
-		languageSelection.addItem("영문 도전");
-		languageSelection.addItem("기호 도전");
-		languageSelection.addItem("한글 + 영문 도전");
-		languageSelection.currentIndexChanged.connect((index) -> {
+		setLanguageComboBox.addItem("한글 도전");
+		setLanguageComboBox.addItem("영문 도전");
+		setLanguageComboBox.addItem("기호 도전");
+		setLanguageComboBox.addItem("한글 + 영문 도전");
+		setLanguageComboBox.currentIndexChanged.connect((index) -> {
 			this.languageSet = index;
 		});
 
 		menuLayout.addWidget(titleLabel);
 		menuLayout.addWidget(subtitleLabel);
-		menuLayout.addWidget(userSetupButton);
-		menuLayout.addWidget(startButton);
-		menuLayout.addWidget(recordsButton);
-		menuLayout.addWidget(languageSelection);
+		menuLayout.addWidget(userSetupPushButton);
+		menuLayout.addWidget(startGamePushButton);
+		menuLayout.addWidget(rankDisplayPushButton);
+		menuLayout.addWidget(setLanguageComboBox);
 	}
 
 	private void initUser() {
@@ -114,20 +114,20 @@ public class AcidRain extends QWidget {
 		titleLabel.setAlignment(Qt.AlignmentFlag.AlignCenter);
 		titleLabel.setStyleSheet("font: bold 16px;");
 
-		userInputField = new QLineEdit(userWidget);
-		userInputField.setPlaceholderText("여기에 입력하십시오.");
-		userInputField.returnPressed.connect(this, "setUserData()");
-		userInputField.setFixedSize(200, 30);
+		nameLineEdit = new QLineEdit(userWidget);
+		nameLineEdit.setPlaceholderText("여기에 입력하십시오.");
+		nameLineEdit.returnPressed.connect(this, "setUserData()");
+		nameLineEdit.setFixedSize(200, 30);
 
-		QPushButton returnToMenu = new QPushButton("메뉴로 돌아가기", userWidget);
-		returnToMenu.setFixedSize(200, 45);
-		returnToMenu.clicked.connect(this, "returnToMenu()");
+		QPushButton returnToMenuPushButton = new QPushButton("메뉴로 돌아가기", userWidget);
+		returnToMenuPushButton.setFixedSize(200, 45);
+		returnToMenuPushButton.clicked.connect(this, "returnToMenu()");
 
 		QVBoxLayout userLayout = new QVBoxLayout(userWidget);
 		userLayout.setAlignment(Qt.AlignmentFlag.AlignCenter);
 		userLayout.addWidget(titleLabel);
-		userLayout.addWidget(userInputField);
-		userLayout.addWidget(returnToMenu);
+		userLayout.addWidget(nameLineEdit);
+		userLayout.addWidget(returnToMenuPushButton);
 
 	}
 
@@ -138,10 +138,11 @@ public class AcidRain extends QWidget {
 
 	@SuppressWarnings("unused")
 	private void setUserData() {
-		String userInput = this.userInputField.text().trim();
+		String userInput = this.nameLineEdit.text().trim();
 
 		this.userName = userInput;
 		QMessageBox.information(this, "도전자 이름", "새로운 사용자 이름은 " + this.userName + "입니다.");
+		returnToMenu();
 	}
 
 	private void initGame() {
@@ -157,24 +158,23 @@ public class AcidRain extends QWidget {
 
 		scoreLabel = new QLabel("점수: 0", gameWidget);
 
-		gameInputField = new QLineEdit(gameWidget);
-		gameInputField.setPlaceholderText("여기에 입력하십시오.");
-		gameInputField.returnPressed.connect(this, "checkWord()");
+		gameInputLineEdit = new QLineEdit(gameWidget);
+		gameInputLineEdit.setPlaceholderText("여기에 입력하십시오.");
+		gameInputLineEdit.returnPressed.connect(this, "checkWord()");
 
 		QVBoxLayout gameLayout = new QVBoxLayout(gameWidget);
 		gameLayout.addWidget(view);
 		gameLayout.addWidget(scoreLabel);
-		gameLayout.addWidget(gameInputField);
+		gameLayout.addWidget(gameInputLineEdit);
 
 	}
-
 
 	@SuppressWarnings("unused")
 	private void gameLogic() {
 
 		score = 0;
 		scoreLabel.setText("점수: 0");
-		gameInputField.clear();
+		gameInputLineEdit.clear();
 
 		for (QGraphicsTextItem word : fallingWords) {
 			scene.removeItem(word);
@@ -182,11 +182,11 @@ public class AcidRain extends QWidget {
 		fallingWords.clear();
 
 		stackedWidget.setCurrentIndex(2);
-		gameInputField.setFocus();
+		gameInputLineEdit.setFocus();
 
-		gameTimer = new QTimer(this);
-		gameTimer.timeout.connect(this, "moveWord()");
-		gameTimer.start(30);
+		frameTimer = new QTimer(this);
+		frameTimer.timeout.connect(this, "moveWord()");
+		frameTimer.start(30);
 
 		spawnTimer = new QTimer(this);
 		spawnTimer.timeout.connect(this, "spawnWord()");
@@ -216,7 +216,7 @@ public class AcidRain extends QWidget {
 				randomWord = englishWordList[random.nextInt(englishWordList.length)];
 			break;
 		}
-		
+
 		QGraphicsTextItem textItem = scene.addText(randomWord);
 
 		int xPos = random.nextInt(SCREEN_WIDTH - 200) + 100;
@@ -230,7 +230,7 @@ public class AcidRain extends QWidget {
 			word.setPos(word.x(), word.y() + 2);
 
 			if (word.y() >= scene.height()) {
-				gameTimer.stop();
+				frameTimer.stop();
 				spawnTimer.stop();
 				QMessageBox.information(this, "게임 종료 ", "최종 점수는 " + score + "점입니다.");
 				saveScore(score);
@@ -249,8 +249,8 @@ public class AcidRain extends QWidget {
 
 	@SuppressWarnings("unused")
 	private void checkWord() {
-		String typedText = gameInputField.text().trim();
-		gameInputField.clear();
+		String typedText = gameInputLineEdit.text().trim();
+		gameInputLineEdit.clear();
 
 		QGraphicsTextItem matchedWord = null;
 		for (QGraphicsTextItem word : fallingWords) {
@@ -270,52 +270,60 @@ public class AcidRain extends QWidget {
 
 	private void initScore() {
 		scoreWidget = new QWidget(this);
-		
 
-		QPushButton returnToMenu = new QPushButton("메뉴로 돌아가기", scoreWidget);
-		returnToMenu.clicked.connect(this,  "returnToMenu()");
-		returnToMenu.setFixedSize(100, 30);
-		
-		rankTable = new QTableWidget();
-		rankTable.setColumnCount(3);
-		rankTable.setHorizontalHeaderLabels(Arrays.asList("이름", "언어", "점수"));
-		rankTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch);
-		rankTable.setFocusPolicy(Qt.FocusPolicy.NoFocus);
-		
+		QPushButton returnToMenuPushButton = new QPushButton("메뉴로 돌아가기", scoreWidget);
+		returnToMenuPushButton.clicked.connect(this, "returnToMenu()");
+		returnToMenuPushButton.setFixedSize(100, 30);
+
+		rankTableWidget = new QTableWidget();
+		rankTableWidget.setColumnCount(3);
+		rankTableWidget.setHorizontalHeaderLabels(Arrays.asList("이름", "언어", "점수"));
+		rankTableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch);
+		rankTableWidget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers);
+		rankTableWidget.setFocusPolicy(Qt.FocusPolicy.NoFocus);
+
 		QVBoxLayout scoreLayout = new QVBoxLayout(scoreWidget);
 		scoreLayout.setAlignment(Qt.AlignmentFlag.AlignLeft);
-		scoreLayout.addWidget(returnToMenu);
-		scoreLayout.addWidget(rankTable);
+		scoreLayout.addWidget(returnToMenuPushButton);
+		scoreLayout.addWidget(rankTableWidget);
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void scoreLogic() {
 		stackedWidget.setCurrentIndex(3);
+		readFromFile();
 	}
-	
-	@SuppressWarnings("unused")
-	private String readFromFile() {
+
+	//@SuppressWarnings("unused")
+	private void readFromFile() {
+		String userNameFromFile;
+		int languageModeFromFile;
+		int scoreFromFile;
 
 		try {
 			Scanner fileScan = new Scanner(new File("acidrain-qt.save"));
-			
-			fileScan.useDelimiter(Pattern.compile(";"));
-			while(fileScan.hasNext()) {
+
+			//fileScan.useDelimiter(Pattern.compile(";"));
+			while (fileScan.hasNextLine()) {
 				fileData = fileScan.next();
+				if(fileData.contains("username=")) {
+					userNameFromFile = fileScan.next();
+					languageModeFromFile = Integer.parseInt(fileScan.next());
+					scoreFromFile = Integer.parseInt(fileScan.next());
+					QMessageBox.information(this, "읽은 자료", "이름: " + userNameFromFile + "모드: " + languageModeFromFile + "점수: " + scoreFromFile);
+				}
 			}
 			fileScan.close();
-			return fileData;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
 	}
 
 	private void saveScore(int finalScore) {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("acidrain-qt.save", true))) {
 
-			writer.write(userName + "; " + languageSet + "; " + String.valueOf(finalScore) + ";");
+			writer.write("username= " + userName + " " + languageSet + " " + String.valueOf(finalScore));
 			writer.newLine();
 			writer.close();
 		} catch (IOException e) {
