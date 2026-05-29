@@ -34,6 +34,7 @@ public class AcidRain extends QWidget {
 	private String[] englishWordList = { "hello", "java", "bruh", "linux", "build", "clang", "maven", "what",
 			"fedora" };
 	private String[] symbolWordList = { "!", "@", "#", "$", "%", "^", "&", "*", "(", ")" };
+	private String[] gameModeList = { "한국어", "영어", "기호", "한/영" };
 	private String userName;
 	private String fileData;
 
@@ -294,23 +295,40 @@ public class AcidRain extends QWidget {
 		readFromFile();
 	}
 
-	//@SuppressWarnings("unused")
+	// @SuppressWarnings("unused")
 	private void readFromFile() {
+		rankTableWidget.setRowCount(0);
+
 		String userNameFromFile;
 		int languageModeFromFile;
-		int scoreFromFile;
+		String scoreFromFile;
+		String unnamed = "null";
 
 		try {
 			Scanner fileScan = new Scanner(new File("acidrain-qt.save"));
 
-			//fileScan.useDelimiter(Pattern.compile(";"));
+			// fileScan.useDelimiter(Pattern.compile(";"));
 			while (fileScan.hasNextLine()) {
-				fileData = fileScan.next();
-				if(fileData.contains("username=")) {
-					userNameFromFile = fileScan.next();
-					languageModeFromFile = Integer.parseInt(fileScan.next());
-					scoreFromFile = Integer.parseInt(fileScan.next());
-					QMessageBox.information(this, "읽은 자료", "이름: " + userNameFromFile + "모드: " + languageModeFromFile + "점수: " + scoreFromFile);
+				fileData = fileScan.nextLine().trim();
+				int currentRow = rankTableWidget.rowCount();
+
+				if (fileData.startsWith("username=")) {
+					String line = fileData.substring("username=".length());
+					String[] word = line.split(";");
+					userNameFromFile = word[0].trim();
+					languageModeFromFile = Integer.parseInt(word[1].trim());
+					scoreFromFile = word[2].trim();
+
+					if (unnamed.equals(userNameFromFile)) {
+						userNameFromFile = "이름 없음";
+					}
+
+					rankTableWidget.insertRow(currentRow);
+					rankTableWidget.setItem(currentRow, 0, new QTableWidgetItem(userNameFromFile));
+					rankTableWidget.setItem(currentRow, 1, new QTableWidgetItem(gameModeList[languageModeFromFile]));
+					rankTableWidget.setItem(currentRow, 2, new QTableWidgetItem(scoreFromFile + "점"));
+					// QMessageBox.information(this, "읽은 자료", "이름: " + userNameFromFile + "모드: " +
+					// languageModeFromFile + "점수: " + scoreFromFile);
 				}
 			}
 			fileScan.close();
@@ -323,7 +341,7 @@ public class AcidRain extends QWidget {
 	private void saveScore(int finalScore) {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("acidrain-qt.save", true))) {
 
-			writer.write("username= " + userName + " " + languageSet + " " + String.valueOf(finalScore));
+			writer.write("username= " + userName + "; " + languageSet + "; " + String.valueOf(finalScore) + ";");
 			writer.newLine();
 			writer.close();
 		} catch (IOException e) {
