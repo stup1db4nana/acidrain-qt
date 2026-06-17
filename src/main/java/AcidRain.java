@@ -40,6 +40,7 @@ public class AcidRain extends QWidget {
 
 	private Random random = new Random();
 
+	// 주 윈도우. 스택 위젯으로 메인메뉴, 이름설정, 게임, 점수 4가지 씬 설정
 	public AcidRain() {
 		stackedWidget = new QStackedWidget(this);
 
@@ -62,6 +63,7 @@ public class AcidRain extends QWidget {
 		setFixedSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 
+	//메인메뉴. 이름입력, 게임하기, 랭킹 확인하기 3개 푸쉬버튼, 언어 설정 콤보박스 
 	private void initMenu() {
 		menuWidget = new QWidget(this);
 		QVBoxLayout menuLayout = new QVBoxLayout(menuWidget);
@@ -106,6 +108,7 @@ public class AcidRain extends QWidget {
 		menuLayout.addWidget(setLanguageComboBox);
 	}
 
+	//사용자 이름 입력, setUserData()에 연결
 	private void initUser() {
 		userWidget = new QWidget(this);
 
@@ -132,11 +135,13 @@ public class AcidRain extends QWidget {
 
 	}
 
+	//씬 변경
 	@SuppressWarnings("unused")
 	private void userLogic() {
 		stackedWidget.setCurrentIndex(1);
 	}
 
+	//userName에 사용자 이름 입력
 	@SuppressWarnings("unused")
 	private void setUserData() {
 		String userInput = this.nameLineEdit.text().trim();
@@ -146,6 +151,7 @@ public class AcidRain extends QWidget {
 		returnToMenu();
 	}
 
+	//게임플레이 씬, 라인에딧으로 입력 받고 checkWord로 단어 일치 검사
 	private void initGame() {
 		gameWidget = new QWidget(this);
 
@@ -170,6 +176,7 @@ public class AcidRain extends QWidget {
 
 	}
 
+	//프레임 로직, 단어 스폰과 이동 제어
 	@SuppressWarnings("unused")
 	private void gameLogic() {
 
@@ -194,6 +201,7 @@ public class AcidRain extends QWidget {
 		spawnTimer.start(1000);
 	}
 
+	// 설정에 따라 무작위로 단어 생성
 	@SuppressWarnings("unused")
 	private void spawnWord() {
 
@@ -225,6 +233,7 @@ public class AcidRain extends QWidget {
 		fallingWords.add(textItem);
 	}
 
+	// 단어 아래로 2픽셀식 이동, 30밀리초 단위
 	@SuppressWarnings("unused")
 	private void moveWord() {
 		for (QGraphicsTextItem word : fallingWords) {
@@ -244,10 +253,12 @@ public class AcidRain extends QWidget {
 
 	}
 
+	//메뉴인덱스 0으로 설정
 	private void returnToMenu() {
 		stackedWidget.setCurrentIndex(0);
 	}
 
+	//입력된 단어와 일치하는 fallingWords가 있는지 검사
 	@SuppressWarnings("unused")
 	private void checkWord() {
 		String typedText = gameInputLineEdit.text().trim();
@@ -269,6 +280,7 @@ public class AcidRain extends QWidget {
 		}
 	}
 
+	//점수 씬, 랭크테이블에 스코어로직 연결
 	private void initScore() {
 		scoreWidget = new QWidget(this);
 
@@ -289,12 +301,14 @@ public class AcidRain extends QWidget {
 		scoreLayout.addWidget(rankTableWidget);
 	}
 
+	//스코어 씬으로 변경 후 readFromFIle
 	@SuppressWarnings("unused")
 	private void scoreLogic() {
 		stackedWidget.setCurrentIndex(3);
 		readFromFile();
 	}
 
+	// acidrain-qt.save에서 기록 불러오기
 	// @SuppressWarnings("unused")
 	private void readFromFile() {
 		rankTableWidget.setRowCount(0);
@@ -338,6 +352,7 @@ public class AcidRain extends QWidget {
 		}
 	}
 
+	// acidrain-qt.save에 기록 저장
 	private void saveScore(int finalScore) {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("acidrain-qt.save", true))) {
 
@@ -349,6 +364,7 @@ public class AcidRain extends QWidget {
 		}
 	}
 
+	//메인. qt스타일링은 네이티브로 설정
 	public static void main(String[] args) {
 		QApplication.initialize(args);
 		String nativeStyle = QApplication.style().objectName();
